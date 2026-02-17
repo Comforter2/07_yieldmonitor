@@ -150,7 +150,7 @@ ggplot()+
            xmin = miny,
            xmax = maxy,
            alpha = 0.3,
-           fill = "green")
+           fill = "yellow")
 
 
 ```
@@ -189,10 +189,10 @@ summary(yield17_w$speed_mph)
 
 ## Raw speed quantiles  
 ```{r}
-lowq_speed 
+lowq_speed = quantile(yield17_w$speed_mph, 0.08)
 lowq_speed
 
-upq_speed 
+upq_speed = quantile(yield17_w$speed_mph, 0.99)
 upq_speed
 
 iqr <- upq_speed - lowq_speed
@@ -227,22 +227,22 @@ ggplot()+
            ymax = Inf,
            xmin = minv, 
            xmax = maxv,
-           alpha = .6, 
-           fill = "green")
+           alpha = .3, 
+           fill = "yellow")
 
 ```
 
 ## Filtering min/max raw speed  
 ```{r}
-yield17_w_sf 
+yield17_w_sf = yield17_w_yf %>%
+  filter(speed_mph > minv & speed_mph < maxv)
 
 yield17_w_sf
-
 ```
 
 ## Min/max speed cleaned summary  
 ```{r}
-
+summary(yield17_w_sf$speed_mph)
 ```
 
 # Yield editor - Position  
@@ -251,27 +251,32 @@ Why filter based on boundary?
 
 ## Field boundary  
 ```{r}
-boundary 
+boundary = read_sf("../../05-digitizing/ouput/boundary.geojson")
 
 boundary
 ```
 
 ```{r}
-boundary_w 
+boundary_w = boundary %>%
+  st_transform(6345)
   
 boundary_w
 ```
 
 ## Field boundary plot  
 ```{r}
-yieldmap_raw
+yieldmap_raw +
+  geom_sf(data = boundary_w,
+          fill = NA,
+          linewidth = 1)
 ```
 
 Let’s create a negative buffer of 20 m.  
 
 ## Buffer  
 ```{r}
-buffer 
+buffer = boundary_w %>%
+  st_buffer(dist = -20) #the unit of whatever is your CRS
 
 buffer
 ```
@@ -279,13 +284,20 @@ buffer
 ```{r}
 yieldmap_raw + 
   geom_sf(data=boundary_w, 
-          fill = NA)
+          fill = NA,
+          linewidth = 1,
+          color = "black") +
+  geom_sf(data = buffer,
+          fill = NA,
+          linewidth = 1,
+          color = "orange")
 ```
 
 
 ## Filtering position  
 ```{r}
-yield17_w_pf 
+yield17_w_pf = yield17_w_sf %>%
+  st_intersection(buffer)
 
 yield17_w_pf
 ```
@@ -299,14 +311,24 @@ summary(yield17_w_pf$yield_lbac)
 ## Summary statistics  
 ### Raw yield summary  
 ```{r}
-summary_raw 
+summary_raw = yield17_w %>%
+  summarise(n = length(yield_lbac),
+            min = min(yield_lbac),
+            mean = mean(yield_lbac),
+            max = max(yield_lbac),
+            sd = sd(yield_lbac),
+            cv = (sd/mean)*100
+            ) %>%
+  mutate(data = "raw") %>%
+  dplyr::select(data, everything())
+
 
 summary_raw
 ```
 
 ### Clean yield summary  
 ```{r}
-summary_filtered <- ... %>%
+summary_filtered <- yield17_w_pf %>%
   summarise(n = length(yield_lbac),
             min = min(yield_lbac),
             mean = mean(yield_lbac),
@@ -332,8 +354,13 @@ ggplot()+
   geom_density(data = yield17_w, 
                aes(x = yield_lbac), 
                fill = "blue", 
+               alpha = .5) +
+  geom_density(data = yield17_w_pf, 
+               aes(x = yield_lbac), 
+               fill = "yellow", 
                alpha = .5)
 ```
+The density shifted from the bottom left to the peak where mean is.
 
 # Maps  
 ## Raw yield map  
@@ -372,12 +399,14 @@ yieldmap_raw + yieldmap_clean
 
 ## Side-by-side raw vs. cleaned yield map interactive  
 ```{r}
-
+sync(yieldmap_raw_int, yieldmap_clean_int)
 ```
 
 # Exporting cleaned version  
 ```{r}
-
+write_sf(yield17_w_pf,
+         "../data/yield17_clean.geojson",
+         delete_dsn = T)
 
 ```
 
