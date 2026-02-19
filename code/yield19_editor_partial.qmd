@@ -372,7 +372,7 @@ summary_filtered
 
 clean_yield19_summary = summary_filtered %>%
   st_drop_geometry() %>%
-  select(-data) %>%
+  select(-data, -sd, -n) %>%
   pivot_longer(cols = everything(),
                names_to = "Variable", 
                values_to = "Value") %>%
@@ -386,8 +386,8 @@ read_csv("../ouput/clean_yield19_summary.csv")
 ### Combined yield summary
 
 ```{r}
-summary_raw %>%
-  bind_rows(summary_filtered)
+#summary_raw %>%
+  #bind_rows(summary_filtered)
 ```
 
 ## Density plot
@@ -421,9 +421,11 @@ yieldmap_clean <- ggplot(yield19_w_pf)+
   geom_sf(aes(color = yield_lbac), 
           size = .1)+
   scale_color_viridis_b() +
-  labs(color = "Yield (lb/ac)") +
+  labs(color = "Yield (lb/ac)",
+       title = "2019 Yield Map") +
   theme_map() +
-  theme(legend.position = "right") +
+  theme(legend.position = "right",
+        plot.title = element_text(hjust = 0.5)) +
   annotation_scale(location = "bl",
                    width_hint = 0.4,
                    pad_y = unit(-0.0001, "in")) +
