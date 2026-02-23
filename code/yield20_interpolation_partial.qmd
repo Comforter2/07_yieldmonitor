@@ -202,7 +202,7 @@ summary_filtered <- idw_pred_v %>%
                values_to = "Value") %>%
   mutate(Value = round(Value, 2))
 
-write_csv(summary_filtered, "../ouput/ipyield19_summary.csv")
+write_csv(summary_filtered, "../ouput/ipyield20_summary.csv")
 
 ```
 

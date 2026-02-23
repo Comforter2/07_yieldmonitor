@@ -1,6 +1,6 @@
 ---
 title: "Assignment #6"
-author: "YOUR FULL NAME"
+author: "COMFORT ADEGBENRO"
 format:
   html:
     toc: true
@@ -28,21 +28,60 @@ Some tips:
 
 - You will need to adapt the file being read into R, and the name of the file being saved at the end. You may follow the same naming scheme as we did in class (just changing the year).   
 
-- Deadline is Wednesday Feb 25 11:59 pm (we will use all 3 interpolated cleaned yield data on our next steps). 
+- Deadline is Monday Feb 23 11:59 pm (we will use all 3 interpolated cleaned yield data on our next steps). 
+
+# Set up
+
+```{r}
+#| message: false
+#| warning: false
+
+library(magick)
+library(tidyverse)
+```
 
 # Questions  
 
 ## 1. What is the min, median, max for the **interpolated** cleaned yield data from 2019?  
 
+```{r interpolated yield19 summary}
+#| message: false
+#| warning: false
+
+ip_yield19_summary = read_csv("../ouput/ipyield19_summary.csv") %>%
+  mutate(Value = sprintf("%.2f", Value))
+  
+ip_yield19_summary
+```
+
 ## 2. Create a map of the **interpolated** yield data from 2019, including the map elements of north arrow and scale, and coloring points according to yield using a colorblind-friendly color scale.  
 
-
+```{r clean yield19 map}
+ip_yieldmap19 = image_read("../ouput/ip_yieldmap19.png")
+print(ip_yieldmap19, info = FALSE)
+```
 
 ## 3. What is the min, median, max for the **interpolated** cleaned yield data from 2020?  
 
+
+```{r interpolated yield20 summary}
+#| message: false
+#| warning: false
+
+ip_yield20_summary = read_csv("../ouput/ipyield20_summary.csv") %>%
+  mutate(Value = sprintf("%.2f", Value))
+  
+ip_yield20_summary
+```
+
 ## 4. Create a map of the **interpolated** yield data from 2020, including the map elements of north arrow and scale, and coloring points according to yield using a colorblind-friendly color scale.  
 
- 
+
+```{r clean yield20 map}
+ip_yieldmap20 = image_read("../ouput/ip_yieldmap20.png")
+print(ip_yieldmap20, info = FALSE)
+```
+
 
 ---
 
