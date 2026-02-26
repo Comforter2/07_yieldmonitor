@@ -299,8 +299,8 @@ Let's apply these rules below:
 sy_all_class = sy_all %>%
   mutate(stclass = case_when(
     cv_pixel > 30 ~ "unstable",
-    cv_pixel < 30 & mean_pixel > 120 ~ "high-stable",
-    cv_pixel < 30 & mean_pixel > 80 & mean_pixel < 120 ~ "medium-stable",
+    cv_pixel < 30 & mean_pixel >= 120 ~ "high-stable",
+    cv_pixel < 30 & mean_pixel >= 80 & mean_pixel < 120 ~ "medium-stable",
     cv_pixel < 30 & mean_pixel < 80 ~ "low-stable"
     
   ))
@@ -310,7 +310,11 @@ sy_all_class
 
 Now, let's plot the classes.  
 ```{r}
-
+ggplot() +
+  geom_sf(data = sy_all_class,
+          aes(fill = stclass),
+          color = NA) +
+  scale_fill_viridis_d(option = "C")
 ```
 
 
@@ -319,14 +323,18 @@ Now, let's plot the classes.
 # Classes proportion  
 Let's calculate below:  
 ```{r proportion per stability zone}
-
+sy_all_class %>%
+  group_by(stclass) %>%
+  tally() %>%
+  mutate(percent = n/3962*100)
 
 ```
 
 # Exporting  
 Let's export this data set so we can use it again in a future exercise.  
 ```{r exporting yield stability}
-
+write_sf(sy_all_class, "../data/sy_all.geojson",
+         delete_dsn = T)
 ```
 
 # Summary  
