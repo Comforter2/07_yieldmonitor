@@ -96,7 +96,7 @@ sy_17 = yieldic17 %>%
   mutate(medianyield_lbac = median(ipyield_lbac)) %>%
   mutate(sy = ipyield_lbac/medianyield_lbac *100) %>%
   mutate(sy = round(sy, 1)) %>%
-  select(sy17 = sy, geometry)
+  dplyr::select(sy17 = sy, geometry)
 
 sy_17
 ```
@@ -128,7 +128,7 @@ sy_19 = yieldic19 %>%
   mutate(medianyield_lbac = median(ipyield_lbac)) %>%
   mutate(sy = ipyield_lbac/medianyield_lbac *100) %>%
   mutate(sy = round(sy, 1)) %>%
-  select(sy19 = sy, geometry)
+  dplyr::select(sy19 = sy, geometry)
 
 
 sy_19
@@ -160,7 +160,7 @@ sy_20  = yieldic20 %>%
   mutate(medianyield_lbac = median(ipyield_lbac)) %>%
   mutate(sy = ipyield_lbac/medianyield_lbac *100) %>%
   mutate(sy = round(sy, 1)) %>%
-  select(sy20 = sy, geometry)
+  dplyr::select(sy20 = sy, geometry)
 
 
 sy_20
@@ -315,6 +315,9 @@ ggplot() +
           aes(fill = stclass),
           color = NA) +
   scale_fill_viridis_d(option = "C")
+
+ggsave("../ouput/stabclass.png",
+       bg = "white")
 ```
 
 
